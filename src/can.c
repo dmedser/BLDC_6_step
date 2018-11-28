@@ -102,7 +102,8 @@ void ISR_can_rx(void) {
 		uint16_t received_roll_no = (uint16_t)(data_low >> 16);
 		if(received_roll_no == ROLL_NO) {
 			rotor.target_turns_per_min = (uint16_t)data_low;
-			float coarse_duty_cycle_preset = (rotor.target_turns_per_min - rotor.calibration_offset) / rotor.calibration_multiplier;
+			float coarse_duty_cycle_preset = (rotor.target_turns_per_min > 0) ?
+			((rotor.target_turns_per_min - rotor.calibration_offset) / rotor.calibration_multiplier) : 0;
 			update_duty_cycle((coarse_duty_cycle_preset >= 0) ? coarse_duty_cycle_preset : 0);
 		}
 	}

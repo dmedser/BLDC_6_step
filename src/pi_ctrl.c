@@ -5,8 +5,8 @@
 static float P = 0.0f;
 static float I = 0.0f;
 
-static float Ki = 0.00007f;
-static float Kp = 0.008f;
+static float Ki = 0.00006f;
+static float Kp = 0.007f;
 
 #define I_MAX  2
 #define I_MIN  -I_MAX

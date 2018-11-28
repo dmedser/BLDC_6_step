@@ -51,7 +51,7 @@ void ISR_timer_angle(void) {
 	//if(rotor_angle_is_captured) {
 
 		//switch(direction) {
-		//	case CLOCKWISE: 	   { rotor_angle_data = /*(rotor_angle_data == 360) ? 0 :*/ rotor_angle_data + 10; break; }
+		//	case CLOCKWISE:        { rotor_angle_data = /*(rotor_angle_data == 360) ? 0 :*/ rotor_angle_data + 10; break; }
 		//	case COUNTERCLOCKWISE: { rotor_angle_data = /*(rotor_angle_data == 0) ? 360 :*/ rotor_angle_data - 10; break; }
 		//}
 
@@ -232,7 +232,7 @@ void update_leading_vector_angle(void) {
 	int32_t leading_vector_angle = (int32_t)rotor_angle + torque_delta;
 
 	leading_vector_angle = (leading_vector_angle > 360) ? (leading_vector_angle - 360) :
-						   ((leading_vector_angle < 0)  ? (360 + leading_vector_angle) : leading_vector_angle);
+	                       ((leading_vector_angle < 0)  ? (360 + leading_vector_angle) : leading_vector_angle);
 
 	set_leading_vector_angle((uint16_t)leading_vector_angle);
 

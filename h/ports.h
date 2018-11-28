@@ -6,7 +6,8 @@
 #include <IfxPort.h>
 
 #define SET_PIN_STATE(PIN, STATE)  IfxPort_setPinState(PIN, (STATE == ON) ?\
-		                           IfxPort_State_high : IfxPort_State_low)
+                                   IfxPort_State_high : IfxPort_State_low)
+
 #define GET_HS_STATE(HS)           IfxPort_getPinState(HS)
 
 #define PH_A_L  &MODULE_P11, 3

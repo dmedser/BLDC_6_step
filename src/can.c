@@ -6,6 +6,7 @@
 #include "rotor.h"
 #include "pwm.h"
 #include "rtos.h"
+#include "pi_ctrl.h"
 #include <IfxMultican_Can.h>
 #include <IfxSrc_reg.h>
 #include <stdint.h>
@@ -111,6 +112,8 @@ void ISR_can_rx(void) {
 			((rotor.target_turns_per_min - rotor.calibration_offset) / rotor.calibration_multiplier) : 0;
 
 			update_duty_cycle((coarse_duty_cycle_preset > 0) ? coarse_duty_cycle_preset : 0);
+
+			reset_pi_components();
 
 			last_can_cmd_timestamp = cnt_100_ms;
 		}

@@ -19,7 +19,9 @@ static void ISR_rtos_100_ms(void);
 
 static uint32_t cnt_100_us = 0;
 static uint32_t cnt_1_ms = 0;
-static uint32_t cnt_100_ms = 0;
+
+uint32_t last_can_cmd_timestamp = 0;
+uint32_t cnt_100_ms = 0;
 
 /* RTOS 100 us level */
 static void rtos_base_init(void) {
@@ -85,7 +87,7 @@ static void ISR_rtos_100_us(void){
 
 	cnt_100_us++;
 
-	/* Call 1 ms level - service request 0 */
+	/* Call RTOS 1 ms level - service request 0 */
 	if(cnt_100_us == 10) {
 		cnt_100_us = 0;
 		MODULE_SRC.GPSR.GPSR[0].SR0.B.SETR = 0b1;
@@ -142,9 +144,19 @@ static void ISR_rtos_10_ms(void) {
 
 
 static inline void pi_ctrl_process(void) {
+
+	#define MINIMAL_DRIVING_DUTY_CYCLE  150
+	#define PI_CTRL_HOLD_TIME           80  /* 8 sec */
+
 	if(rotor.target_turns_per_min > 0) {
-		float new_duty_cycle = duty_cycle + pi_ctrl(rotor.target_turns_per_min, rotor.current_turns_per_min);
-		update_duty_cycle((new_duty_cycle >= 0) ? new_duty_cycle : 0);
+
+		if((cnt_100_ms - last_can_cmd_timestamp) > PI_CTRL_HOLD_TIME) {
+
+			float new_duty_cycle = duty_cycle + pi_ctrl(rotor.target_turns_per_min, rotor.current_turns_per_min);
+
+			update_duty_cycle((new_duty_cycle > MINIMAL_DRIVING_DUTY_CYCLE) ? new_duty_cycle : MINIMAL_DRIVING_DUTY_CYCLE);
+
+		}
 	}
 }
 

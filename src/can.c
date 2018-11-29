@@ -5,6 +5,7 @@
 #include "roll_params.h"
 #include "rotor.h"
 #include "pwm.h"
+#include "rtos.h"
 #include <IfxMultican_Can.h>
 #include <IfxSrc_reg.h>
 #include <stdint.h>
@@ -96,16 +97,24 @@ void ISR_can_rx(void) {
 	uint8_t received_opcode = ((uint8_t)data_high) & 0x01;
 
 	#define OPCODE_WRITE 1
-    #define OPCODE_READ  0
+	#define OPCODE_READ  0
 
 	if((rx_msg.id == CAN_DST_MO_MSG_ID) && (received_opcode == OPCODE_WRITE)) {
+
 		uint16_t received_roll_no = (uint16_t)(data_low >> 16);
+
 		if(received_roll_no == ROLL_NO) {
+
 			rotor.target_turns_per_min = (uint16_t)data_low;
+
 			float coarse_duty_cycle_preset = (rotor.target_turns_per_min > 0) ?
 			((rotor.target_turns_per_min - rotor.calibration_offset) / rotor.calibration_multiplier) : 0;
-			update_duty_cycle((coarse_duty_cycle_preset >= 0) ? coarse_duty_cycle_preset : 0);
+
+			update_duty_cycle((coarse_duty_cycle_preset > 0) ? coarse_duty_cycle_preset : 0);
+
+			last_can_cmd_timestamp = cnt_100_ms;
 		}
+
 	}
 
 	IfxCpu_enableInterrupts();
